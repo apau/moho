@@ -15,11 +15,19 @@
 package com.voxeo.moho;
 
 import com.voxeo.moho.event.Observer;
+import com.voxeo.moho.event.TextEvent;
 
 /**
  * <p>
  * This is where a Moho application starts. A Moho application must have one
  * implementation class of Application.
+ * </p>
+ * <p>
+ * A typical entry point is upon receiving one of these event types:
+ *  <ol>
+ *      <li>{@link com.voxeo.moho.event.InviteEvent} for an incoming call</li>
+ *      <li>{@link com.voxeo.moho.event.TextEvent} for an incoming text message </li>
+ *  </ol>
  * </p>
  * <p>
  * The Application implementation class must be a public class with a public
@@ -28,10 +36,10 @@ import com.voxeo.moho.event.Observer;
  * <block>
  * <ul>
  * <li>lifecycle management by implementing
- * {@link com.voxeo.moho.Application#init(ApplicationContext) init} and
- * {@link com.voxeo.moho.Application#destroy() destroy} methods</li>
- * <li>observing inbound calls by implementing a method that takes a type of
- * {@link com.voxeo.moho.event.SignalEvent SignalEvent}. See
+ * {@link com.voxeo.moho.Application#init(ApplicationContext) init()} and
+ * {@link com.voxeo.moho.Application#destroy() destroy()} methods</li>
+ * <li>inbound signal and text events by implementing callback methods to handle 
+ * {@link com.voxeo.moho.event.SignalEvent SignalEvent} and {@link TextEvent}. See
  * {@link com.voxeo.moho.event.Observer Observer} for information about the
  * method signature requirements.</li>
  * </ul>
@@ -50,8 +58,14 @@ import com.voxeo.moho.event.Observer;
  *       // initialize application
  *     }
  *     
- *     public void myInviteHandler(InviteEvent invitation) {
+ *     // callback for INVITE event
+ *     public void handleInvite(InviteEvent invitation) {
  *        Call call = invitation.accept();
+ *     }
+ *     
+ *     // callback for TEXT event
+ *     public void handleText(TextEvent event) {
+ *     	  String msg=e.getText();
  *     }
  *     
  *     public destroy() {

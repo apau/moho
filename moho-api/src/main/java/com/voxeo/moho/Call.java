@@ -18,11 +18,17 @@ import java.util.Map;
 
 import javax.media.mscontrol.join.Joinable.Direction;
 
+import com.voxeo.moho.event.InviteEvent;
+
 /**
  * <p>
- * A call is a leg of communication from an Endpoint to the Moho application.
- * The leg must have signal controlled by the Moho application, optionally media
+ * A call is a leg of communication from an {@link Endpoint} to the Moho {@link Application}.
+ * A call must have signal controlled by the Moho application, optionally media
  * as well.
+ * </p>
+ * <p>
+ * A call is created when the Moho Application {@link InviteEvent#accept() accept} a InviteEvent. 
+ * Furthermore, a call may join to Media Server via {@link #getMediaService()}, or {@link #join} to other Endpoints.
  * </p>
  * <p>
  * A call is an {@link com.voxeo.moho.event.EventSource EventSource} that
@@ -56,8 +62,8 @@ public interface Call extends MultiStreamParticipant {
   }
 
   /**
-   * join the call to media server in
-   * {@link javax.media.mscontrol.join.Joinable.Direction.DUPLEX}.
+   * join this call to media server in
+   * {@link javax.media.mscontrol.join.Joinable.Direction.DUPLEX DUPLEX}.
    * 
    * @throws IllegalStateException
    *           if the call has been disconnected.
@@ -65,89 +71,89 @@ public interface Call extends MultiStreamParticipant {
   Joint join();
 
   /**
-   * join the call to media server in the specified direction.
+   * join this call to media server in the specified <code>direction</code>.
    * 
+   * @param direction
+   * 			direction of media stream flow from call to media server.
+   * 				{@link javax.media.mscontrol.join.Joinable.Direction.SEND SEND} means from call to media server; 
+   * 				{@link javax.media.mscontrol.join.Joinable.Direction.RECV RECV} means from media server to call; 
+   * 				{@link javax.media.mscontrol.join.Joinable.Direction.DUPLEX DUPLEX} means bidirectional.
    * @throws IllegalStateException
-   *           if the call has been disconnected.
+   *           if the call has been {@link com.voxeo.moho.Call.DISCONNECTED DISCONNECTED}.
    */
   Joint join(Direction direction);
 
   /**
-   * Connect this participant to the specified endpoint. The signaling protocol
-   * used is based on the endpoint type
+   * Connect this call to endpoint <code>other</code>. The signaling protocol
+   * used is based on the endpoint <code>type</code>.
    * 
-   * @param other
-   *          the endpoint
-   * @param type
-   *          whether the media is bridged or direct between the two
-   *          participants
    * @param direction
-   *          whether the media is full duplex or half-duplex between the two
-   *          participants
-   * @return the participant of the specified endpoint
+   *          direction of media stream flow from call to <code>other</code>: {@link javax.media.mscontrol.join.Joinable.Direction.DUPLEX DUPLEX}, {@link javax.media.mscontrol.join.Joinable.Direction.SEND SEND}, or {@link javax.media.mscontrol.join.Joinable.Direction.RECV RECV}.
+   * @param other
+   *          endpoint to join with.
+   * @param type
+   *          media connection mode in {@link Participant.JoinType#BRIDGE BRIDGE} or {@link Participant.JoinType#DIRECT DIRECT}.
+   * @return status of join.
    * @throws IllegalStateException
-   *           if the call has been released.
+   *           if the call has been {@link com.voxeo.moho.Call.DISCONNECTED DISCONNECTED}.
    */
-  Joint join(CallableEndpoint other, Participant.JoinType type, Direction direction);
+  Joint join(Direction direction, CallableEndpoint other, Participant.JoinType type);
 
   /**
-   * Connect this participant to the specified endpoint. The signaling protocol
-   * used is based on the endpoint type
+   * Connect this call to endpoint <code>other</code>. The signaling protocol
+   * used is based on the endpoint <code>type</code>.
    * 
-   * @param other
-   *          the endpoint
-   * @param type
-   *          whether the media is bridged or direct between the two
-   *          participants
    * @param direction
-   *          whether the media is full duplex or half-duplex between the two
-   *          participants
-   * @param headers
-   *          the additional protocol specific headers sent to the endpoint.
-   * @return the participant of the specified endpoint
+   *          direction of media stream flow from call to <code>other</code>: {@link javax.media.mscontrol.join.Joinable.Direction.DUPLEX DUPLEX}, {@link javax.media.mscontrol.join.Joinable.Direction.SEND SEND}, or {@link javax.media.mscontrol.join.Joinable.Direction.RECV RECV}
+   * @param other 
+   *          the endpoint to join with.
+   * @param type 
+   *          media connection mode in {@link Participant.JoinType#BRIDGE BRIDGE} or {@link Participant.JoinType#DIRECT DIRECT} 
+   * @param headers 
+   *          additional protocol specific headers sent to endpoint <code>other</code>.
+   * @return status of join.
    * @throws IllegalStateException
-   *           if the call has been released.
+   *           if the call has been {@link com.voxeo.moho.Call.DISCONNECTED DISCONNECTED}.
    */
-  Joint join(CallableEndpoint other, Participant.JoinType type, Direction direction, Map<String, String> headers);
+  Joint join(Direction direction, CallableEndpoint other, Participant.JoinType type, Map<String, String> headers);
 
   /**
    * supervised mode delivers more events to the listener
    * 
-   * @return whether this call is supervised or not.
+   * @return <code>true</code> if call is supervised; <code>false</code> if not.
    */
   boolean isSupervised();
 
   /**
    * @param supervised
-   *          true if to turn on supervised mode
+   *          <code>true</code> to turn on supervised mode.
    */
   void setSupervised(boolean supervised);
 
   /**
-   * return the media service attached to the call
+   * return the media service attached to this call
    * 
    * @param reinvite
-   *          whether Moho Framework should automatically re-invites the call to
-   *          {@link Participant.JoinType#BRIDGE Bridge} mode if the call is
-   *          currently joined in {@link Participant.JoinType#DIRECT Direct}
-   *          mode.
+   *          <code>true</code> for Moho Framework to automatically re-invite this call to
+   *          {@link Participant.JoinType#BRIDGE BRIDGE} mode if currently
+   *          joint in {@link Participant.JoinType#DIRECT DIRECT} mode.
    * @throws MediaException
-   *           when there is media server error.
+   *           media server error.
    * @throws IllegalStateException
-   *           when the call is {@link Participant.JoinType#DIRECT Direct} mode
-   *           but reinvite is false or if the call is not answered.
+   *           if the call is in {@link Participant.JoinType#DIRECT DIRECT} mode
+   *           and <code>reinvite</code> is <code>false</code>, or if the call is not answered.
    */
   MediaService getMediaService(boolean reinvite);
 
   /**
-   * return the media service attached to the call. Equivalent of
+   * return the media service attached to this call. Equivalent of
    * {@link #getMediaService(boolean) getMediaService(true)}.
    * 
    * @throws MediaException
-   *           when there is media server error.
+   *           media server error.
    * @throws IllegalStateException
-   *           when the call is {@link Participant.JoinType#DIRECT Direct} mode
-   *           but reinvite is false or if the call is not answered.
+   *           if the call is in {@link Participant.JoinType#DIRECT DIRECT} mode
+   *           and <code>reinvite</code> is <code>false</code>, or if the call is not answered.
    */
   MediaService getMediaService();
 
@@ -157,22 +163,22 @@ public interface Call extends MultiStreamParticipant {
   State getCallState();
 
   /**
-   * @return the peer participant (from call control point of view)
+   * @return the peer participants (from call control point of view)
    */
   Call[] getPeers();
 
   /**
-   * mute the endpoint, make it listen-only.
+   * mute this call, make it listen-only.
    */
   void mute();
 
   /**
-   * unmute the endpoint
+   * unmute this call.
    */
   void unmute();
 
   /**
-   * hold the endpoint
+   * hold this call.
    */
   void hold();
 

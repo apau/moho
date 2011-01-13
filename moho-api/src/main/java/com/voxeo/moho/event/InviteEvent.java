@@ -66,26 +66,26 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
   }
 
   /**
-   * @return the address that sends the invitation
+   * @return address of the sender of the invitation
    */
   public abstract Endpoint getInvitor();
 
   /**
-   * @return the address that is supposed to receive invitation
+   * @return address of the receiver of the invitation
    */
   public abstract CallableEndpoint getInvitee();
 
   /**
-   * Accept the event.
+   * Accept the INVITE event.
    * 
    * @return the {@link Call Call} resulted by accepting the invitation.
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCall() {
-    return this.acceptCall((Observer) null);
+  public Call accept() {
+    return this.accept((Observer) null);
   }
 
   /**
@@ -95,10 +95,10 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCall(final Map<String, String> headers) {
-    return this.acceptCall((Map<String, String>) null, (Observer) null);
+  public Call accept(final Map<String, String> headers) {
+    return this.accept((Map<String, String>) null, (Observer) null);
   }
 
   /**
@@ -111,10 +111,10 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCall(final Observer... observers) throws SignalException, IllegalStateException {
-    return this.acceptCall(null, observers);
+  public Call accept(final Observer... observers) throws SignalException, IllegalStateException {
+    return this.accept(null, observers);
   }
 
   /**
@@ -128,10 +128,10 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCall(final EventListener<?>... listeners) throws SignalException, IllegalStateException {
-    return this.acceptCall(null, listeners);
+  public Call accept(final EventListener<?>... listeners) throws SignalException, IllegalStateException {
+    return this.accept(null, listeners);
   }
 
   /**
@@ -148,9 +148,9 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public abstract Call acceptCall(final Map<String, String> headers, final EventListener<?>... listeners)
+  public abstract Call accept(final Map<String, String> headers, final EventListener<?>... listeners)
       throws SignalException, IllegalStateException;
 
   /**
@@ -167,9 +167,9 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws SignalException
    *           when there is any signal error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public abstract Call acceptCall(final Map<String, String> headers, final Observer... observer)
+  public abstract Call accept(final Map<String, String> headers, final Observer... observer)
       throws SignalException, IllegalStateException;
 
   /**
@@ -180,10 +180,10 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws MediaException
    *           when there is any media server error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCallWithEarlyMedia() throws SignalException, MediaException, IllegalStateException {
-    return this.acceptCallWithEarlyMedia((Map<String, String>) null);
+  public Call acceptWithEarlyMedia() throws SignalException, MediaException, IllegalStateException {
+    return this.acceptWithEarlyMedia((Map<String, String>) null);
   }
 
   /**
@@ -198,11 +198,11 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws MediaException
    *           when there is any media server error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCallWithEarlyMedia(final Map<String, String> headers) throws SignalException, MediaException,
+  public Call acceptWithEarlyMedia(final Map<String, String> headers) throws SignalException, MediaException,
       IllegalStateException {
-    return this.acceptCallWithEarlyMedia(headers, (Observer) null);
+    return this.acceptWithEarlyMedia(headers, (Observer) null);
   }
 
   /**
@@ -217,11 +217,11 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws MediaException
    *           when there is any media server error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCallWithEarlyMedia(final Observer... observers) throws SignalException, MediaException,
+  public Call acceptWithEarlyMedia(final Observer... observers) throws SignalException, MediaException,
       IllegalStateException {
-    return this.acceptCallWithEarlyMedia(null, observers);
+    return this.acceptWithEarlyMedia(null, observers);
   }
 
   /**
@@ -236,11 +236,11 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws MediaException
    *           when there is any media server error.
    * @throws IllegalStateException
-   *           when the event has been accpeted.
+   *           when the event has been accepted.
    */
-  public Call acceptCallWithEarlyMedia(final EventListener<?>... listeners) throws SignalException, MediaException,
+  public Call acceptWithEarlyMedia(final EventListener<?>... listeners) throws SignalException, MediaException,
       IllegalStateException {
-    return this.acceptCallWithEarlyMedia(null, listeners);
+    return this.acceptWithEarlyMedia(null, listeners);
   }
 
   /**
@@ -260,7 +260,7 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws IllegalStateException
    *           when the event has been accpeted.
    */
-  public abstract Call acceptCallWithEarlyMedia(final Map<String, String> headers, final EventListener<?>... listeners)
+  public abstract Call acceptWithEarlyMedia(final Map<String, String> headers, final EventListener<?>... listeners)
       throws SignalException, MediaException, IllegalStateException;
 
   /**
@@ -280,14 +280,14 @@ public abstract class InviteEvent extends SignalEvent implements RejectableEvent
    * @throws IllegalStateException
    *           when the event has been accpeted.
    */
-  public abstract Call acceptCallWithEarlyMedia(final Map<String, String> headers, final Observer... observers)
+  public abstract Call acceptWithEarlyMedia(final Map<String, String> headers, final Observer... observers)
       throws SignalException, MediaException, IllegalStateException;
 
   /**
-   * redirect the INVITE to others via 302
+   * redirect the INVITE to <code>other</code> via 302
    * 
    * @param other
-   *          the other endpoint
+   *          the endpoint to redirect to.
    * @throws SignalException
    *           when there is any signal error.
    */
